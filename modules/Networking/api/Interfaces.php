@@ -86,9 +86,11 @@ class Interfaces
         exec("ifconfig -a | grep wlan | awk '{print \$1}'", $interfaceArray);
 
         foreach ($interfaceArray as $interface) {
+            /* changed for show all interfaces
             if (substr($interface, 0, 5) === "wlan0") {
                 continue;
             }
+            */
             array_push($clientInterfaces, $interface);
         }
         return array_reverse($clientInterfaces);
