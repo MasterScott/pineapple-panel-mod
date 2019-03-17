@@ -1,0 +1,147 @@
+<div ng-controller="ModuleManagerController">
+    <div class="row" ng-hide="linking">
+        <div class="col-sm-12">
+
+            <p class="alert well-sm alert-success" ng-show="installedModule">Successfully Installed Module</p>
+            <p class="alert well-sm alert-success" ng-show="removedModule">Successfully Removed Module</p>
+
+            <div ng-hide="gotAvailableModules">
+                <button class="btn btn-default" ng-click="getAvailableModules()" ng-disabled="loading">Get Modules from WiFiPineapple.com</button>
+                <img src="img/throbber.gif" ng-show="loading">
+                <br/><br/>
+            </div>
+            <div class="alert well-sm alert-danger" ng-show="connectionError">
+                {{ connectionError }}
+            </div>
+
+            <div class="panel panel-default" ng-if="(selectedModule !== false)">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Install Module: {{ selectedModule.module }}</h3>
+                </div>
+                <div class="panel-body text-center" ng-if='(downloading === false && installing === false)'>
+                    <button class="btn btn-default" ng-show="selectedModule.sd" ng-click="downloadModule('sd')">
+                        Install to SD card
+                    </button>
+                    <button class="btn btn-default" ng-show="selectedModule.internal" ng-click="downloadModule('internal')">
+                        Install to internal storage
+                    </button>
+                    <br><span class="text-info" ng-show="(!selectedModule.sd && selectedModule.internal && device !=== 'tetra')">Using an SD card instead of internal storage is strongly recommended.</span>
+                    <span ng-show="(!selectedModule.sd && !selectedModule.internal)">
+                        You do not have enough free space to install this module. Please insert an SD card and ensure that it is formatted correctly.
+                    </span>
+                </div>
+                <div class="panel-body text-center" ng-if='downloading === true'>
+                    <img src="img/throbber.gif"><br>
+                    Downloading Module, please wait.
+                </div>
+                <div class="panel-body text-center" ng-if='installing === true'>
+                    <img src="img/throbber.gif"><br>
+                    Installing Module, please wait.
+                </div>
+            </div>
+
+            <div class="panel panel-default" ng-show="gotAvailableModules">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Available Modules <button class="btn btn-default btn-xs btn-fixed-length pull-right" ng-click="getAvailableModules()">Refresh</button></h3>
+                </div>
+                <div class="table-responsive table-dropdown">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Module</th>
+                                <th>Version</th>
+                                <th>Description</th>
+                                <th>Author</th>
+                                <th>Size</th>
+                                <th>Type</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="(moduleName, module) in availableModules" ng-if="module.installed === undefined">
+                                <td>
+                                    {{ module['title'] }}
+                                </td>
+                                <td>
+                                    {{ module['version'] }}
+                                </td>
+                                <td>
+                                    {{ module['description'] }}
+                                </td>
+                                <td>
+                                    {{ module['author'] }}
+                                </td>
+                                <td>
+                                    {{ (module['size']/1024).toFixed(2) }}K
+                                </td>
+                                <td>
+                                    {{ module['type'] }}
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-xs btn-fixed-length" ng-hide="module.installable" ng-click="checkDestination(moduleName, module['size'])">Update</button>
+                                    <button type="button" class="btn btn-default btn-xs btn-fixed-length" ng-show="module.installable" ng-click="checkDestination(moduleName, module['size'])">Install</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 text-center" ng-if="linking">
+            <img src="img/throbber.gif">
+        </div>
+    </div>
+
+    <div class="row" ng-hide="linking">
+        <div class="col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Installed Modules</h3>
+                </div>
+                <div class="table-responsive table-dropdown">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Module</th>
+                                <th>Version</th>
+                                <th>Description</th>
+                                <th>Size</th>
+                                <th>Author</th>
+                                <th>Type</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="(moduleName, module) in installedModules" ng-hide="(module['type'] == 'System')">
+                                <td>
+                                    {{ module['title'] }}
+                                </td>
+                                <td>
+                                    {{ module['version'] }}
+                                </td>
+                                <td>
+                                    {{ module['description'] }}
+                                </td>
+                                <td>
+                                    {{ module['size'] }}
+                                </td>
+                                <td>
+                                    {{ module['author'] }}
+                                </td>
+                                <td>
+                                    {{ module['type'] }}
+                                </td>
+                                <td>
+                                <button type="button" class="btn btn-danger btn-xs btn-fixed-length" ng-hide="(module['type'] === 'System')" ng-click="removeModule(moduleName)">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
