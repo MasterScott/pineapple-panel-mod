@@ -43,14 +43,14 @@ class Logging extends SystemModule
     {
         $dbLocation = $this->uciGet("pineap.@config[0].hostapd_db_path");
         $db = new DatabaseConnection($dbLocation);
-        $rows = $db->query("SELECT * FROM log ORDER BY log_time ASC;");
+        $rows = $db->query("SELECT * FROM log ORDER BY updated_at ASC;");
         $logFile = fopen("/tmp/pineap.log", 'w');
         $count = "-";
         foreach ($rows as $row) {
             switch ($row['log_type']) {
                 case 0:
                     $type = "Probe Request";
-                    $count = $row['log_count'];
+                    $count = $row['dups'];
                     break;
                 case 1:
                     $type = "Association";
@@ -62,7 +62,7 @@ class Logging extends SystemModule
                     $type = "";
                     break;
             }
-            fwrite($logFile, "${row['log_time']},\t${type},\t${row['mac']},\t${row['ssid']},\t${count}\n");
+            fwrite($logFile, "${row['created_at']},\t${type},\t${row['mac']},\t${row['ssid']},\t${count}\n");
         }
         fclose($logFile);
         $this->response = array("download" => $this->downloadFile('/tmp/pineap.log'));
@@ -96,7 +96,7 @@ class Logging extends SystemModule
     {
         $dbLocation = $this->uciGet("pineap.@config[0].hostapd_db_path");
         $db = new DatabaseConnection($dbLocation);
-        $rows = $db->query("SELECT * FROM log ORDER BY log_time DESC;");
+        $rows = $db->query("SELECT * FROM log ORDER BY updated_at DESC;");
         $this->response = array("pineap_log" => $rows);
     }
 

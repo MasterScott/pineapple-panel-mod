@@ -55,20 +55,20 @@ class DBHandler(threading.Thread):
     def createAPArray(self):
         self.accessPoints = {}
         cursor = self.conn.cursor()
-        cursor.execute("SELECT * FROM aps WHERE datetime(last_seen) >= datetime('now', '-60 Second') AND scan_id = " + str(self.scanID) + ";")
+        cursor.execute("SELECT ssid,bssid,encryption,channel,signal,wps,last_seen from aps WHERE datetime(last_seen, 'unixepoch', 'localtime') >= datetime('now', '-60 Second') AND scan_id = " + str(self.scanID) + ";")
         apRows = cursor.fetchall()
 
         for row in apRows:
             ap = {}
-            ap["bssid"] = row[3]
-            ap["ssid"] = row[2]
-            ap["channel"] = row[6]
-            ap["encryption"] = self.printEncryption(row[4])
-            ap["wps"] = row[8]
-            ap["lastSeen"] = row[9]
-            ap["power"] = row[7]
+            ap["bssid"] = row[1]
+            ap["ssid"] = row[0]
+            ap["channel"] = row[3]
+            ap["encryption"] = self.printEncryption(row[2])
+            ap["wps"] = row[5]
+            ap["lastSeen"] = row[6]
+            ap["power"] = row[4]
             ap["clients"] = []
-            self.accessPoints[row[3]] = ap
+            self.accessPoints[row[1]] = ap
 
             self.realAPs = []
             for key, value in self.accessPoints.iteritems():
@@ -78,18 +78,19 @@ class DBHandler(threading.Thread):
         self.unassociatedClients = []
         self.outOfRangeClients = {}
         cursor = self.conn.cursor()
-        cursor.execute("SELECT * from clients WHERE datetime(last_seen) >= datetime('now', '-60 Second') AND scan_id = " + str(self.scanID) + ";")
+        cursor.execute("SELECT mac,bssid,last_seen from clients WHERE datetime(last_seen, 'unixepoch', 'localtime') >= datetime('now', '-60 Second') AND scan_id = " + str(self.scanID) + ";")
+
         clientRows = cursor.fetchall()
 
         for row in clientRows:
-            if row[3] == "FF:FF:FF:FF:FF:FF":
-                self.unassociatedClients.append({'mac': row[2], 'lastSeen': row[4]})
-            elif row[3] in self.accessPoints:
-                cliObj = {"mac": row[2], "lastSeen": row[4]}
-                if cliObj not in self.accessPoints[row[3]]["clients"]:
-                    self.accessPoints[row[3]]["clients"].append(cliObj)
+            if row[1] == "FF:FF:FF:FF:FF:FF":
+                self.unassociatedClients.append({'mac': row[0], 'lastSeen': row[2]})
+            elif row[1] in self.accessPoints:
+                cliObj = {"mac": row[0], "lastSeen": row[2]}
+                if cliObj not in self.accessPoints[row[1]]["clients"]:
+                    self.accessPoints[row[1]]["clients"].append(cliObj)
             else:
-                self.outOfRangeClients[row[2]] = {"bssid": row[3], "lastSeen": row[4]}
+                self.outOfRangeClients[row[0]] = {"bssid": row[1], "lastSeen": row[2]}
 
     def printEncryption(self, encryptionType):
         retStr = ""

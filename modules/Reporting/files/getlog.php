@@ -24,9 +24,9 @@ if (isset($dbConnection->error['databaseConnectionError'])) {
 }
 $log = NULL;
 if ($probesOnly) {
-    $log = $dbConnection->query("SELECT * FROM log WHERE log_type=0 ORDER BY log_time DESC;");
+    $log = $dbConnection->query("SELECT * FROM log WHERE log_type=0 ORDER BY updated_at DESC;");
 } else {
-    $log = $dbConnection->query("SELECT * FROM log ORDER BY log_time DESC;");
+    $log = $dbConnection->query("SELECT * FROM log ORDER BY updated_at DESC;");
 }
 $clearlog = exec('uci get reporting.@settings[0].clear_log');
 if ($clearlog == '1') {

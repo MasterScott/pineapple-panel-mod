@@ -44,8 +44,12 @@
                     <select class="form-control" id="deauthMultiply" ng-init="deauthMultiple = 1" ng-model="deauthMultiple" ng-options="multiplier for multiplier in [1,2,3,4,5,6,7,8,9,10]">
                     </select>
                     <br>
-                    <button type="button" class="btn btn-default" ng-if="hook === 'mac'" ng-click="deauthClient()">Deauth</button>
-                    <button type="button" class="btn btn-default" ng-if="hook === 'ssid'" ng-click="deauthAP()">Deauth</button>
+                    <button type="button" class="btn btn-default" ng-if="hook === 'mac'" ng-click="deauthClient()" ng-disabled="deauthActive">
+                        Deauth <img src="../img/throbber.gif" class="button-throbber" ng-show="deauthActive"/>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-if="hook === 'ssid'" ng-click="deauthAP()" ng-disabled="deauthActive">
+                        Deauth <img src="../img/throbber.gif" class="button-throbber" ng-show="deauthActive"/>
+                    </button>
                 </div>
                 <div ng-if="show_probes == true">
                     <hr>

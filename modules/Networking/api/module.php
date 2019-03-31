@@ -247,6 +247,7 @@ class Networking extends SystemModule
         $ui = $this->request->WANUIAccess ? 1 : 0;
         $this->uciSet("firewall.allowssh.enabled", $wan);
         $this->uciSet("firewall.allowui.enabled", $ui);
+        $this->uciSet("firewall.allowws.enabled", $ui);
         exec('/etc/init.d/firewall restart');
 
         $this->response = array("success" => true);

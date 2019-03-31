@@ -91,7 +91,13 @@
                         clients: $scope.deauth.clients,
                         channel: $scope.deauth.channel,
                         multiplier: deauthMultiplier
-                    }, $scope.handleResponse);
+                    }, function(response) {
+                        $scope.handleResponse(response);
+                        $scope.deauthActive = true;
+                        $timeout(function () {
+                            $scope.deauthActive = false;
+                        }, 5000);
+                    });
                 };
                 $scope.addMACToFilter = function(){
                     $api.request({
@@ -137,7 +143,13 @@
                         clients: [$scope.content],
                         channel: $scope.deauth.channel,
                         multiplier: deauthMultiplier
-                    }, $scope.handleResponse);
+                    }, function(response) {
+                        $scope.handleResponse(response);
+                        $scope.deauthActive = true;
+                        $timeout(function() {
+                            $scope.deauthActive = false;
+                        }, 5000);
+                    });
                 };
                 $scope.loadProbes = function(){
                     $api.request({

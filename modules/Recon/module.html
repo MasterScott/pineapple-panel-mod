@@ -29,7 +29,7 @@
                             </select>
                             <br/><br/>
                             <div class="btn-group">
-                                <button type="button" class="btn btn-default" ng-click="startScan()" ng-disabled="running || !statusObtained">
+                                <button type="button" class="btn btn-default" ng-click="startScan()" ng-disabled="running || !statusObtained || pineAPDStarting || preparingScan">
                                     <span ng-show="!running">Start</span>
                                     <img class="button-throbber" ng-show="running" src="img/throbber.gif"></button>
                                 </button>
@@ -93,7 +93,7 @@
                     <img ng-show="loadingScan" src="img/throbber.gif"/>
                     <p class="alert well-sm alert-success" ng-show="setLocationSuccess">Succcessfully set scan location.</p>
                     <p class="alert well-sm alert-success" ng-show="removedScan">Succcessfully removed scan.</p>
-                    <p class="alert well-sm alert-info" ng-show="scans == ''">There are no scans available. Please run Recon at least once.</p>
+                    <p class="alert well-sm alert-info" ng-show="scans == '' && !running">There are no scans available. Please run Recon at least once.</p>
                     <p class="alert well-sm alert-danger" ng-show="error && error != 'The PineAP Daemon must be running.'">{{ error }}</p>
                 </div>
             </div>
@@ -152,7 +152,7 @@
                             <td>{{ (accessPoint.wps == 1) ? "Yes" : "No" }}</td>
                             <td>{{ (accessPoint.channel == 0) ? "Wi-Fi Direct" : accessPoint.channel }}</td>
                             <td>{{ accessPoint.power }}</td>
-                            <td class="autoselect">{{ accessPoint.lastSeen | timesincedate }}</td>
+                            <td class="autoselect">{{ accessPoint.lastSeen | timesinceepoch }}</td>
                         </tr>
                         <tr ng-repeat="client in accessPoint.clients" ng-repeat-end class="active">
                             <td></td>
@@ -166,7 +166,7 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td>{{ client.lastSeen | timesincedate }}</td>
+                            <td>{{ client.lastSeen | timesinceepoch }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -206,7 +206,7 @@
                                 <hook-button disable="running && !paused" hook="mac" content="data.bssid"></hook-button>
                                 <span class="autoselect" ng-bind-html="(hasNote(data.bssid) === true ? data.bssid.italics() : data.bssid) | rawHTML"></span><span> </span>
                             </td>
-                            <td>{{ data.lastSeen | timesincedate }}</td>
+                            <td>{{ data.lastSeen | timesinceepoch }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -235,7 +235,7 @@
                                     <hook-button disable="running && !paused" hook="mac" content="client.mac" probes="true" client="true"></hook-button>
                                     <span class="autoselect" ng-bind-html="(hasNote(client.mac) === true ? client.mac.italics() : client.mac) | rawHTML"></span><span> </span>
                                 </td>
-                                <td>{{ client.lastSeen }}</td>
+                                <td>{{ client.lastSeen | timesinceepoch }}</td>
                             </tr>
                         </tbody>
                     </table>

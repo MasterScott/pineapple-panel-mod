@@ -2,7 +2,7 @@
 
 class Tracking extends SystemModule
 {
-    const DATABASE = "/etc/pineapple/pineapple.db";
+    const DATABASE = "/etc/pineapple/filters.db";
 
     private $dbConnection = null;
 
