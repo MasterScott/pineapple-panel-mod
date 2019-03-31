@@ -22,6 +22,7 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
     $scope.updateInterval = 1500;
     $scope.percentageInterval = 300;
     $scope.percent = 0;
+    $scope.preparingScan = false;
     $scope.running = false;
     $scope.pineAPDRunning = true;
     $scope.pineAPDStarting = false;
@@ -83,9 +84,7 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
         }, function (response) {
             $rootScope.captureRunning = response.captureRunning;
             $scope.percent = response.scanPercent;
-            if (response.error) {
-                $scope.error = response.error;
-            } else if (response.completed === true) {
+            if (response.completed === true) {
                 if (!$scope.running && !$scope.loading) {
                     $scope.percent = 100;
                 }
@@ -112,6 +111,7 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
             $scope.pineAPDStarting = false;
             if (response.error === undefined) {
                 $scope.pineAPDRunning = true;
+                $scope.startScan();
                 $scope.error = null;
             } else {
                 $scope.error = response.error;
@@ -120,6 +120,7 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
     };
 
     $scope.startScan = function() {
+        $scope.preparingScan = true;
         $scope.percent = 0;
         if ($scope.running) {
             return;
@@ -149,6 +150,7 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
         }, function(response) {
             if (response.success) {
                 $scope.loading = false;
+                $scope.preparingScan = false;
                 $scope.running = true;
                 $scope.scanID = response.scanID;
                 if ($scope.wsStarted !== true) {
@@ -178,6 +180,7 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
         }, function(response) {
             if (response.success) {
                 $scope.loading = false;
+                $scope.preparingScan = false;
                 $scope.running = true;
                 $scope.scanID = response.scanID;
             } else {
@@ -292,9 +295,6 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
     };
 
     $scope.displayScan = function() {
-        if ($scope.selectedScan === undefined) {
-            return;
-        }
         $scope.getNoteKeys();
         $scope.loadingScan = true;
         $api.request({
@@ -491,6 +491,4 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
         $scope.displayCurrentScan();
         $scope.getNoteKeys();
     }, $scope);
-
-    $scope.noteRefreshInterval = $interval($scope.getNoteKeys, 7000);
 }]);

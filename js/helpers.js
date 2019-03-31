@@ -45,13 +45,10 @@ function annotateMacs() {
 
 function utcDate(timestampStr) {
     var a = timestampStr.split(' ');
-    var ymd = a[0].split('-');
+    var dmy = a[0].split('-');
     var hms = a[1].split(':');
-    /*
-        In javascript, days and years are zero based but months are 1 based
-        Go figure
-    */
-    return new Date(Date.UTC(ymd[0], ymd[1] - 1, ymd[2], hms[0], hms[1], hms[2]));
+
+    return new Date(Date.UTC(dmy[0], dmy[1] - 1, dmy[2], hms[0], hms[1], hms[2]));
 }
 
 function selectElement(elem) {

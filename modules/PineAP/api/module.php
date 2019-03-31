@@ -370,10 +370,11 @@ class PineAP extends SystemModule
     {
         $this->checkPineAP();
         $ssid = $this->request->ssid;
+        $created_date = date('Y-m-d H:i:s');
         if (strlen($ssid) < 1 || strlen($ssid) > 32) {
             $this->error = 'Your SSID must have a length greater than 1 and less than 32.';
         } else {
-            @$this->dbConnection->query("INSERT INTO ssids (ssid) VALUES ('%s')", $ssid);
+            @$this->dbConnection->query("INSERT INTO ssids (ssid, created_at) VALUES ('%s', '%s')", $ssid, $created_date);
             $this->response = array('success' => true);
         }
     }
@@ -382,10 +383,11 @@ class PineAP extends SystemModule
     {
         $this->checkPineAP();
         $ssidList = $this->request->ssids;
+        $created_date = date('Y-m-d H:i:s');
 
         foreach ($ssidList as $ssid) {
             if (strlen($ssid) >= 1 && strlen($ssid) <= 32) {
-                @$this->dbConnection->query("INSERT INTO ssids (ssid) VALUES ('%s');", $ssid);
+                @$this->dbConnection->query("INSERT INTO ssids (ssid, created_at) VALUES ('%s', '%s');", $ssid, $created_date);
             }
         }
         $this->response = array('success' => true);
@@ -839,6 +841,7 @@ class PineAP extends SystemModule
             $this->error = 'Please start PineAP';
             return;
         }
+        file_put_contents('/tmp/inject', $payload);
         $channel = intval($this->request->channel);
         $frameCount = intval($this->request->frameCount);
         $delay = intval($this->request->delay);
@@ -847,10 +850,11 @@ class PineAP extends SystemModule
             1 => array("pipe", "w"),
             2 => array("pipe", "w"),
         );
-        $cmd = "/usr/bin/pineap /tmp/pineap.conf inject ${channel} ${frameCount} ${delay}";
+        $cmd = "/usr/bin/pineap /tmp/pineap.conf inject /tmp/inject ${channel} ${frameCount} ${delay}";
         $process = proc_open($cmd, $descriptorspec, $pipes);
         if (!is_resource($process)) {
             $this->response = array('error' => "Failed to spawn process for command: ${cmd}", 'command' => $cmd);
+            unlink('/tmp/inject');
             return;
         }
         fwrite($pipes[0], $payload);
@@ -858,7 +862,7 @@ class PineAP extends SystemModule
         $output = stream_get_contents($pipes[1]);
         $errorOutput = stream_get_contents($pipes[2]);
         $exitCode = proc_close($process);
-        if (preg_match("/Success\n/i", $output)) {
+        if (empty($output)) {
             $this->response = array(
                 'success' => true,
                 'request' => $this->request,
@@ -874,5 +878,6 @@ class PineAP extends SystemModule
                 'stderr' => $errorOutput
             );
         }
+        unlink('/tmp/inject');
     }
 }

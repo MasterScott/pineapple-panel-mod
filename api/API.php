@@ -9,7 +9,7 @@ class API
     private $response;
     private $error;
     private $dbConnection;
-    const DATABASE = '/etc/pineapple/pineapple.db';
+    const DATABASE = "/etc/pineapple/pineapple.db";
 
     /**
      * The constructor parses the JSON data from PHP's input.
@@ -48,7 +48,7 @@ class API
             if (isset($_SERVER['HTTP_X_XSRF_TOKEN']) && $_SERVER['HTTP_X_XSRF_TOKEN'] === $_SESSION['XSRF-TOKEN']) {
                 return true;
             } else {
-                $this->error = 'Invalid CSRF token';
+                $this->error = "Invalid CSRF token";
                 return false;
             }
         } elseif (isset($this->request->system) && $this->request->system === 'authentication') {
@@ -69,7 +69,7 @@ class API
         if (file_exists('/etc/pineapple/setupRequired')) {
             $this->response = array('error' => 'Not Authenticated', 'setupRequired' => true);
         } else {
-            $this->error = 'Not Authenticated';
+            $this->error = "Not Authenticated";
         }
         return false;
     }
@@ -85,7 +85,7 @@ class API
         } elseif (isset($this->request->module) && !empty($this->request->module)) {
             $this->routeToModule($this->request->module);
         } else {
-            $this->error = 'Invalid request';
+            $this->error = "Invalid request";
         }
     }
 
@@ -168,20 +168,19 @@ class API
         $systemComponent = null;
         switch ($systemRequest) {
             case 'notifications':
-                require_once('Notifications.php');
+                require_once("Notifications.php");
                 $systemComponent = new Notifications($this->request);
                 break;
 
             case 'modules':
-                require_once('Modules.php');
+                require_once("Modules.php");
                 $systemComponent = new Modules($this->request);
                 break;
 
             case 'authentication':
-                require_once('Authentication.php');
+                require_once("Authentication.php");
                 $systemComponent = new Authentication($this->request);
                 break;
-
             case 'setup':
                 if (file_exists('Setup.php')) {
                     require_once('Setup.php');
@@ -200,11 +199,11 @@ class API
     {
         $this->dbConnection->exec("CREATE TABLE IF NOT EXISTS downloads (token VARCHAR NOT NULL, file VARCHAR NOT NULL, time timestamp default (strftime('%s', 'now')));");
         $this->dbConnection->exec("DELETE FROM downloads WHERE time < (strftime('%s', 'now')-30)");
-        $result = $this->dbConnection->query('SELECT file from downloads WHERE token=\'%s\';', $_GET['download']);
+        $result = $this->dbConnection->query('SELECT file from downloads WHERE token="%s";', $_GET['download']);
         if (isset($result[0])) {
             $this->streamFile($result[0]['file']);
         } else {
-            echo 'Invalid download token.';
+            echo "Invalid download token.";
         }
         exit();
     }

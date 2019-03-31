@@ -114,7 +114,7 @@ registerController('SetupController', ['$api', '$scope', '$interval', '$timeout'
         { value: 'SA', country: "Saudi Arabia" },
         { value: 'SG', country: "Singapore" },
         { value: 'SI', country: "Slovenia" },
-        { value: 'SK', country: "Solvak Republic" },
+        { value: 'SK', country: "Slovak Republic" },
         { value: 'ZA', country: "South Africa" },
         { value: 'ES', country: "Spain" },
         { value: 'LK', country: "Sri Lanka" },
