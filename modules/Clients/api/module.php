@@ -51,7 +51,7 @@ class Clients extends SystemModule
     private function getSSIDData()
     {
         $ssidData = array();
-        $clientRows = $this->dbConnection->query("SELECT DISTINCT mac,ssid FROM log WHERE log_type=1 ORDER BY log_time ASC;");
+        $clientRows = $this->dbConnection->query("SELECT DISTINCT mac,ssid FROM log WHERE log_type=1 ORDER BY updated_at ASC;");
         foreach ($clientRows as $row) {
             $ssidData[strtolower($row['mac'])] = $row['ssid'];
         }
