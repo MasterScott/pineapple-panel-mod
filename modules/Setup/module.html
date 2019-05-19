@@ -3,6 +3,7 @@
         .btn-wide {
             width: 100%;
         }
+
         .modal-open {
             overflow: auto;
         }
@@ -15,12 +16,15 @@
                     <h1 class="text-center">Welcome</h1>
                 </div>
                 <div class="modal-footer">
-                    <button ng-click="getStarted();" type="button" data-dismiss="modal" class="btn btn-wide btn-default center-block">Get Started</button>
+                    <button ng-click="getStarted();" type="button" data-dismiss="modal"
+                            class="btn btn-wide btn-default center-block">Get Started
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-    <div ng-show="showChanges" id="changesModal" class="modal fade modal-open" data-backdrop="static" data-keyboard="false" role="dialog">
+    <div ng-show="showChanges" id="changesModal" class="modal fade modal-open" data-backdrop="static"
+         data-keyboard="false" role="dialog">
         <div class="modal-dialog" data-keyboard="false">
             <div class="modal-content">
                 <div class="modal-body">
@@ -30,7 +34,9 @@
                     <div ng-bind-html="changes | rawHTML" data-html="true"></div>
                 </div>
                 <div class="modal-footer">
-                    <button ng-click="showVerificationModal()" type="button" data-dismiss="modal" class="btn btn-wide btn-default center-block">Continue</button>
+                    <button ng-click="showVerificationModal()" type="button" data-dismiss="modal"
+                            class="btn btn-wide btn-default center-block">Continue
+                    </button>
                 </div>
             </div>
         </div>
@@ -76,12 +82,14 @@
                         <div class="row">
                             <div class="col-md-10">
                                 <h3>Set Root Password</h3>
-                                <p>The root account is used for SSH and Web Interface access. Please set a strong password.</p>
+                                <p>The root account is used for SSH and Web Interface access. Please set a strong
+                                    password.</p>
                                 <div class="col-md-8">
                                     <div class="row">
                                         <div class="col-md-10 input-group">
                                             <span class="input-group-addon">Password:</span>
-                                            <input type="password" class="form-control" id="rootPassword" autocomplete="off" ng-model="rootPassword">
+                                            <input type="password" class="form-control" id="rootPassword"
+                                                   autocomplete="off" ng-model="rootPassword">
                                         </div>
                                     </div>
                                 </div>
@@ -90,7 +98,8 @@
                                     <div class="row">
                                         <div class="col-md-10 input-group">
                                             <span class="input-group-addon">Confirm Password:</span>
-                                            <input type="password" class="form-control" id="confirmRootPassword" autocomplete="off" ng-model="confirmRootPassword">
+                                            <input type="password" class="form-control" id="confirmRootPassword"
+                                                   autocomplete="off" ng-model="confirmRootPassword">
                                         </div>
                                     </div>
                                 </div>
@@ -101,7 +110,9 @@
                                     <div class="row">
                                         <div class="col-md-10 input-group">
                                             <span class="input-group-addon">Time Zone:</span>
-                                            <select class="form-control" ng-init="selectedTimeZone = timeZones[12]" ng-model="selectedTimeZone" ng-options="timeZone.description for timeZone in timeZones"></select>
+                                            <select class="form-control" ng-init="selectedTimeZone = timeZones[12]"
+                                                    ng-model="selectedTimeZone"
+                                                    ng-options="timeZone.description for timeZone in timeZones"></select>
                                         </div>
                                     </div>
                                 </div>
@@ -122,12 +133,14 @@
                                 <div class="col-md-10">
                                     <div class="row">
                                         <h3>Management AP Setup</h3>
-                                        <p>A WPA2 secured access point may be used for WiFi Pineapple management. Please choose a unique SSID and a strong password.</p>
+                                        <p>A WPA2 secured access point may be used for WiFi Pineapple management. Please
+                                            choose a unique SSID and a strong password.</p>
                                         <div class="col-md-8">
                                             <div class="row">
                                                 <div class="col-md-10 input-group">
                                                     <span class="input-group-addon">Management SSID:</span>
-                                                    <input type="text" class="form-control" id="managementSSID" ng-model="managementSSID">
+                                                    <input type="text" class="form-control" id="managementSSID"
+                                                           ng-model="managementSSID">
                                                 </div>
                                             </div>
                                         </div>
@@ -136,7 +149,8 @@
                                             <div class="row">
                                                 <div class="col-md-10 input-group">
                                                     <span class="input-group-addon">WPA2 Password:&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                                    <input type="password" class="form-control" id="managementPass" autocomplete="" ng-model="managementPass">
+                                                    <input type="password" class="form-control" id="managementPass"
+                                                           autocomplete="" ng-model="managementPass">
                                                 </div>
                                             </div>
                                         </div>
@@ -145,7 +159,9 @@
                                             <div class="row">
                                                 <div class="col-md-10 input-group">
                                                     <span class="input-group-addon">Confirm Password:</span>
-                                                    <input type="password" class="form-control" id="confirmManagementPass" autocomplete="off" ng-model="confirmManagementPass">
+                                                    <input type="password" class="form-control"
+                                                           id="confirmManagementPass" autocomplete="off"
+                                                           ng-model="confirmManagementPass">
                                                 </div>
                                             </div>
                                         </div>
@@ -153,12 +169,18 @@
                                         <div class="input-group">
                                             <div class="col-md-5">
                                                 <div class="checkbox">
-                                                    <label for="hideManagementAP"><input id="hideManagementAP" type="checkbox" value="" ng-model="hideManagementAP">Hide Management AP</label>
+                                                    <label for="hideManagementAP"><input id="hideManagementAP"
+                                                                                         type="checkbox" value=""
+                                                                                         ng-model="hideManagementAP">Hide
+                                                        Management AP</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-5">
                                                 <div class="checkbox">
-                                                    <label for="disableManagementAP"><input id="disableManagementAP" type="checkbox" value="" ng-model="disableManagementAP">Disable Management AP</label>
+                                                    <label for="disableManagementAP"><input id="disableManagementAP"
+                                                                                            type="checkbox" value=""
+                                                                                            ng-model="disableManagementAP">Disable
+                                                        Management AP</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -170,12 +192,16 @@
                                             <div class="row">
                                                 <div class="col-md-10 input-group">
                                                     <span class="input-group-addon">Open AP SSID:</span>
-                                                    <input type="text" class="form-control" id="openSSID" ng-model="openSSID">
+                                                    <input type="text" class="form-control" id="openSSID"
+                                                           ng-model="openSSID">
                                                 </div>
                                                 <div class="input-group">
                                                     <div class="col-md-8">
                                                         <div class="checkbox">
-                                                            <label for="hideOpenAP"><input id="hideOpenAP" type="checkbox" value="" ng-model="hideOpenAP">Hide Open Access Point</label>
+                                                            <label for="hideOpenAP"><input id="hideOpenAP"
+                                                                                           type="checkbox" value=""
+                                                                                           ng-model="hideOpenAP">Hide
+                                                                Open Access Point</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -184,12 +210,16 @@
                                     </div>
                                     <div class="row">
                                         <h3>Radio Country Code</h3>
-                                        <p>Different countries allow for different transmit power levels. Please select your country for the best experience.</p>
+                                        <p>Different countries allow for different transmit power levels. Please select
+                                            your country for the best experience.</p>
                                         <div class="col-md-8">
                                             <div class="row">
                                                 <div class="col-md-10 input-group">
                                                     <span class="input-group-addon">Country Code:</span>
-                                                    <select class="form-control" ng-init="selectedCountryCode = countryCodes[0]" ng-model="selectedCountryCode" ng-options="countryCode.country for countryCode in countryCodes"></select>
+                                                    <select class="form-control"
+                                                            ng-init="selectedCountryCode = countryCodes[0]"
+                                                            ng-model="selectedCountryCode"
+                                                            ng-options="countryCode.country for countryCode in countryCodes"></select>
                                                 </div>
                                             </div>
                                         </div>
@@ -209,38 +239,78 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-8">
-                                <h3>MAC Filters Setting</h3>
-                                <p class="text-info">In Allow Mode only the listed MAC Addresses are allowed to connect to the Open AP, if set to Deny Mode, the listed MAC Addresses will be unable to join.</p>
+                                <h3>Filters Configuration</h3>
+                                <p>The WiFi Pineapple filtering system limits the scope of engagement by filtering
+                                    devices by MAC address and network by names in an Allow Mode of targeted devices or
+                                    network names and a Deny Mode of off-limit devices or network names.</p>
+                                <br/>
+                                <h3>Client Filters Setting</h3>
+                                <p class="text-info">Client filters specify which devices, by MAC address, are either
+                                    explicitly allowed to connect or explicitly denied from connecting. In Allow Mode
+                                    only the listed MAC Addresses are allowed to connect. In Deny Mode, the listed MAC
+                                    addresses will be prevented from connecting.</p>
+
                                 <div class="input-group">
-                                    <span class="input-group-addon">{{ macFilterMode }} Mode</span>
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button" ng-click="toggleMACMode()">Switch</button>
-                                    </span>
+                                    <label style="font-weight: normal">
+                                        <input type="radio"
+                                               ng-model="macFilterMode"
+                                               value="Allow"/>
+                                        Allow Mode - only allow listed devices to connect
+                                    </label>
+                                    <br/>
+                                    <label style="font-weight: normal">
+                                        <input type="radio"
+                                               ng-model="macFilterMode"
+                                               value="Deny"/>
+                                        Deny Mode - prevent listed devices from connecting
+                                    </label>
                                 </div>
                             </div>
                         </div>
+                        <br/>
                         <div class="row">
                             <div class="col-md-8">
                                 <h3>SSID Filters Setting</h3>
-                                <p class="text-info">In Allow Mode clients can only associate to listed SSIDs, if set to Deny Mode, clients trying to associate to the listed SSIDs will be unable to join.</p>
+                                <p class="text-info">SSID filters specify the network names to which the WiFi Pineapple
+                                    will respond. In Allow Mode, devices will only be allowed to associate with the WiFi
+                                    Pineapple for SSID names listed. In Deny Mode, devices will be prevented from
+                                    associating with the WiFi Pineapple for the listed SSID names.</p>
                                 <div class="input-group">
-                                    <span class="input-group-addon">{{ ssidFilterMode }} Mode</span>
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button" ng-click="toggleSSIDMode()">Switch</button>
-                                    </span>
+                                    <label style="font-weight: normal">
+                                        <input type="radio"
+                                               ng-model="ssidFilterMode"
+                                               value="Allow"/>
+                                        Allow Mode - only allow listed devices to connect
+                                    </label>
+                                    <br/>
+                                    <label style="font-weight: normal">
+                                        <input type="radio"
+                                               ng-model="ssidFilterMode"
+                                               value="Deny"/>
+                                        Deny Mode - prevent listed devices from connecting
+                                    </label>
                                 </div>
+
+                                <br/>
+                                <span style="color: #FF0000"
+                                      ng-show="ssidFilterMode == 'Deny' && macFilterMode == 'Deny'">
+                                WARNING: IN THE SELECTED FILTER CONFIGURATION, ALL DEVICES WILL BE ABLE TO ASSOCIATE WITH THE WIFI PINEAPPLE FOR ALL SSID NAMES.
+                            </span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5" ng-show="device == 'tetra'">
                                 <h3>Firewall Settings</h3>
                                 <div class="input-group">
-                                    <p class="text-info">These firewall rules allow you to configure access to the SSH and Web Access via the WAN Ethernet port on your device.</p>
+                                    <p class="text-info">These firewall rules allow you to configure access to the SSH
+                                        and Web Access via the WAN Ethernet port on your device.</p>
                                     <div class="checkbox">
-                                        <label><input type="checkbox" ng-model="WANSSHAccess">Allow SSH Access via WAN</label>
+                                        <label><input type="checkbox" ng-model="WANSSHAccess">Allow SSH Access via
+                                            WAN</label>
                                     </div>
                                     <div class="checkbox">
-                                        <label><input type="checkbox" ng-model="WANUIAccess">Allow Web Access via WAN</label>
+                                        <label><input type="checkbox" ng-model="WANUIAccess">Allow Web Access via
+                                            WAN</label>
                                     </div>
                                 </div>
                             </div>
@@ -260,10 +330,15 @@
                                 <h3>Legal</h3>
                                 <div class="input-group">
                                     <div class="checkbox">
-                                        <label><input type="checkbox" ng-model="eula">I accept the <a target="_blank" href="/modules/Setup/eula.txt" tabindex="-1">EULA</a></label>
+                                        <label><input type="checkbox" ng-model="eula">I accept the <a target="_blank"
+                                                                                                      href="/modules/Setup/eula.txt"
+                                                                                                      tabindex="-1">EULA</a></label>
                                     </div>
                                     <div class="checkbox">
-                                        <label><input type="checkbox" ng-model="license">I accept the <a target="_blank" href="/modules/Setup/license.txt" tabindex="-1">Software Licence</a></label>
+                                        <label><input type="checkbox" ng-model="license">I accept the <a target="_blank"
+                                                                                                         href="/modules/Setup/license.txt"
+                                                                                                         tabindex="-1">Software
+                                            Licence</a></label>
                                     </div>
                                 </div>
                             </div>

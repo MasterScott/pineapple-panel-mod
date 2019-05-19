@@ -54,8 +54,7 @@
                 if (input === undefined) {
                     return "";
                 }
-                var then = new Date(0);
-                then.setUTCSeconds(input);
+                var then = new Date(input * 1000);
                 var now = new Date();
                 var hoursSince = Math.round(Math.abs(now - then) / 1000 / 60 / 60);
                 var minutesSince = Math.round(Math.abs(now - then) / 60 / 1000);
@@ -72,6 +71,21 @@
                     var year = then.getYear();
                     return 'at ' + (year + 1900) + '-' + month + '-' + day + ' ' + hours + ':' + minutes;
                 }
+            }
+        })
+
+        .filter('utcToBrowser', function () {
+            return function (input) {
+                if (input === undefined) {
+                    return "";
+                }
+                var d = new Date(input + " UTC");
+
+                var day = d.getDate();
+                var month = d.getMonth();
+                var year = d.getFullYear();
+
+                return day + ' ' + month+1 + ' ' + year;
             }
         })
 

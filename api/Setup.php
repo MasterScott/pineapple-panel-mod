@@ -11,7 +11,7 @@ class Setup extends APIModule
         $new = $this->request->rootPassword;
         $shadow_file = file_get_contents('/etc/shadow');
         $root_array = explode(":", explode("\n", $shadow_file)[0]);
-        $salt = '$1$'.explode('$', $root_array[1])[2].'$';
+        $salt = '$1$' . explode('$', $root_array[1])[2] . '$';
         $new = crypt($new, $salt);
         $find = implode(":", $root_array);
         $root_array[1] = $new;
@@ -38,7 +38,7 @@ class Setup extends APIModule
 
     private function getChanges()
     {
-        if(file_exists("/etc/pineapple/changes")) {
+        if (file_exists("/etc/pineapple/changes")) {
             $changes = file_get_contents("/etc/pineapple/changes");
             $version = trim(file_get_contents('/etc/pineapple/pineapple_version'));
             $this->response = array('changes' => $changes, 'fwversion' => $version);
@@ -153,8 +153,8 @@ class Setup extends APIModule
     private function setupFirewall()
     {
         if ($this->request->WANSSHAccess) {
-           exec("uci set firewall.allowssh.enabled=1");
-           exec("uci commit firewall");
+            exec("uci set firewall.allowssh.enabled=1");
+            exec("uci commit firewall");
         }
 
         if ($this->request->WANUIAccess) {
@@ -189,6 +189,17 @@ class Setup extends APIModule
             $this->error = "Please accept the EULA and Software License.";
             return false;
         }
+
+        if ($this->request->macFilterMode !== "Allow" && $this->request->macFilterMode !== "Deny") {
+            $this->error = "Please choose a setting for the Client Filter.";
+            return false;
+        }
+
+        if ($this->request->ssidFilterMode !== "Allow" && $this->request->ssidFilterMode !== "Deny") {
+            $this->error = "Please choose a setting for the SSID Filter.";
+            return false;
+        }
+
 
         if ($this->changePassword() && $this->setupWifi()) {
             $this->setupPineAP();

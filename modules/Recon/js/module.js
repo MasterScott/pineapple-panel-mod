@@ -247,6 +247,28 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
         });
     };
 
+    $scope.convertDateToBrowserTime = function(scanDate) {
+        var m = [
+            "01", "02", "03",
+            "04", "05", "06",
+            "07", "08", "09",
+            "10", "11", "12"
+        ];
+
+        var ts = scanDate.replace(' ', 'T');
+        ts += 'Z';
+
+        var d = new Date(ts);
+        var day = d.getDate();
+        var year = d.getFullYear();
+        var month = d.getMonth();
+        var hour = d.getHours();
+        var mins = d.getMinutes();
+        var secs = d.getSeconds();
+
+        return year + '-' + m[month] + '-' + day + ' ' + hour + ':' + mins + ':' + secs;
+    };
+
     $scope.getScans = function() {
         $api.request({
             module: 'Recon',
@@ -254,6 +276,9 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
         }, function(response) {
             if(response.error === undefined) {
                 $scope.scans = response.scans;
+                $scope.scans.forEach((scan) => {
+                    scan.date = $scope.convertDateToBrowserTime(scan.date);
+                });
                 $scope.selectedScan = response.scans[0];
                 $scope.statusObtained = true;
             } else {
@@ -303,6 +328,9 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
         }, function(response) {
             if(response.error === undefined) {
                 $scope.scans = response.scans;
+                $scope.scans.forEach((scan) => {
+                    scan.date = $scope.convertDateToBrowserTime(scan.date);
+                });
                 $api.request({
                     module: 'Recon',
                     action: 'loadResults',

@@ -6,8 +6,8 @@ registerController('SetupController', ['$api', '$scope', '$interval', '$timeout'
     $scope.confirmRootPassword = '';
     $scope.selectedTimeZone = '';
     $scope.selectedCountryCode = '';
-    $scope.macFilterMode = 'Allow';
-    $scope.ssidFilterMode = 'Deny';
+    $scope.macFilterMode = '';
+    $scope.ssidFilterMode = '';
     $scope.device = '';
     $scope.error = '';
     $scope.changes = "";

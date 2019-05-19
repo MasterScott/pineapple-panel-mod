@@ -20,6 +20,7 @@ class PineAP extends SystemModule
             $this->dbConnection = new DatabaseConnection($dbLocation);
         }
     }
+
     public function route()
     {
         switch ($this->request->action) {
@@ -230,28 +231,18 @@ class PineAP extends SystemModule
         $this->toggleComment(PineAP::EAP_USER_FILE, 6, true);
     }
 
-    private function loadProbes() {
+    private function loadProbes()
+    {
         $mac = strtolower($this->request->mac);
-        $probeArray = array();
-        $dbPath = $this->uciGet("pineap.@config[0].hostapd_db_path");
+        $probesArray = array();
 
-        $dbConnection = new DatabaseConnection($dbPath);
-        if (!$dbConnection) {
-            $this->response = array('error' => 'Failed to create database connection');
-            return;
+        exec("/usr/bin/pineap list_probes ${mac}", $output);
+
+        foreach ($output as $probeSSID) {
+            array_push($probesArray, $probeSSID);
         }
-        if (isset($dbConnection->error['databaseConnectionError'])) {
-            $this->response = array('error' => $dbConnection->strError());
-            return;
-        }
-        $rows = $dbConnection->query("SELECT ssid FROM log WHERE mac='%s' COLLATE NOCASE AND log_type=0;", $mac);
-        foreach ($rows as $row) {
-            array_push($probeArray, $row['ssid']);
-        }
-        $this->response = array(
-            'success' => true,
-            'probes' => implode("\n", array_unique($probeArray))
-        );
+
+        $this->response = array('success' => true, 'probes' => implode("\n", array_unique($probesArray)));
     }
 
     private function downloadPineAPPool()
@@ -332,7 +323,8 @@ class PineAP extends SystemModule
         }
     }
 
-    private function getPoolData() {
+    private function getPoolData()
+    {
         $ssidPool = "";
         $rows = $this->dbConnection->query('SELECT * FROM ssids;');
         if (!isset($rows['databaseQueryError'])) {
@@ -343,7 +335,8 @@ class PineAP extends SystemModule
         return $ssidPool;
     }
 
-    private function getNewPoolData() {
+    private function getNewPoolData()
+    {
         $ssidPool = "";
         $rows = $this->dbConnection->query('SELECT * FROM ssids WHERE new_ssid=1;');
         if (!isset($rows['databaseQueryError'])) {
@@ -589,7 +582,7 @@ class PineAP extends SystemModule
     {
         $settings = $this->request->settings;
         if ((strlen($settings->ssid) < 1 || strlen($settings->ssid) > 32) ||
-            (strlen($settings->mac) < 17 || strlen($settings->mac) > 17 )) {
+            (strlen($settings->mac) < 17 || strlen($settings->mac) > 17)) {
             $this->error = "Invalid settings provided.";
             return;
         }
@@ -603,12 +596,12 @@ class PineAP extends SystemModule
         }
 
         if ($settings->enableAssociations) {
-            $this->uciSet("pineap.@config[0].pineape_passthrough","on");
+            $this->uciSet("pineap.@config[0].pineape_passthrough", "on");
         } else {
-            $this->uciSet("pineap.@config[0].pineape_passthrough","off");
+            $this->uciSet("pineap.@config[0].pineape_passthrough", "off");
         }
 
-        switch(strtoupper($settings->downgrade)) {
+        switch (strtoupper($settings->downgrade)) {
             case "MSCHAPV2":
                 $this->enableMSCHAPV2Downgrade();
                 break;
@@ -730,17 +723,12 @@ class PineAP extends SystemModule
     private function getHandshake()
     {
         $bssid = str_replace(':', '-', $this->request->bssid);
-        exec("pineap /tmp/pineap.conf get_status", $status_output);
-        $status_output = implode("\n", $status_output);
-        $status_output = json_decode($status_output, true);
-        if ($status_output['captureRunning'] === false) {
-            if (file_exists("/tmp/handshakes/{$bssid}_full.pcap")) {
-                $this->response = array('handshakeExists' => true, 'partial' => false);
-            } else if (file_exists("/tmp/handshakes/{$bssid}_partial.pcap")) {
-                $this->response = array('handshakeExists' => true, 'partial' => true);
-            } else {
-                $this->response = array('handshakeExists' => false);
-            }
+        if (file_exists("/tmp/handshakes/{$bssid}_full.pcap")) {
+            $this->response = array('handshakeExists' => true, 'partial' => false);
+        } else if (file_exists("/tmp/handshakes/{$bssid}_partial.pcap")) {
+            $this->response = array('handshakeExists' => true, 'partial' => true);
+        } else {
+            $this->response = array('handshakeExists' => false);
         }
     }
 
@@ -813,7 +801,7 @@ class PineAP extends SystemModule
             } else {
                 $suffix .= "partial";
             }
-            $this->response = array("download" => $this->downloadFile("/tmp/handshakes/{$bssid}{$suffix}.{$type}"));
+            $this->response = array("download" => $this->downloadFile("/tmp/handshakes/{$bssid}{$suffix}.pcap"));
         } else {
             $this->response = array("download" => $this->downloadFile("/tmp/handshakes/{$bssid}.{$type}"));
         }

@@ -57,8 +57,9 @@
                     <button type="button" class="btn btn-default" ng-click="loadProbes()">Load</button>
                     <button type="button" class="btn btn-default" ng-click="addProbes()" ng-show="probes">Add all probes to PineAP Pool</button>
                     <br>
+                    <br>
                     <div class="alert well-sm alert-success" ng-show="probesAdded">All probes added to the PineAP Pool</div>
-                    <div class="alert alert-danger text-center" ng-show="probeError">No Probes found. Is probe logging enabled?</div>
+                    <div class="alert alert-danger text-center" ng-show="probeError">No Probe Requests were found for this MAC Address.</div>
                     <textarea class="form-control" rows="10" ng-model="probes" ng-show="probes" readonly></textarea>
                 </div>
                 <div ng-if="hook == 'mac'">

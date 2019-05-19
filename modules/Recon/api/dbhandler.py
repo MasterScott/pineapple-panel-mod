@@ -55,7 +55,7 @@ class DBHandler(threading.Thread):
     def createAPArray(self):
         self.accessPoints = {}
         cursor = self.conn.cursor()
-        cursor.execute("SELECT ssid,bssid,encryption,channel,signal,wps,last_seen from aps WHERE datetime(last_seen, 'unixepoch', 'localtime') >= datetime('now', '-60 Second') AND scan_id = " + str(self.scanID) + ";")
+        cursor.execute("SELECT ssid,bssid,encryption,channel,signal,wps,last_seen from aps WHERE scan_id = " + str(self.scanID) + ";")
         apRows = cursor.fetchall()
 
         for row in apRows:
@@ -78,7 +78,7 @@ class DBHandler(threading.Thread):
         self.unassociatedClients = []
         self.outOfRangeClients = {}
         cursor = self.conn.cursor()
-        cursor.execute("SELECT mac,bssid,last_seen from clients WHERE datetime(last_seen, 'unixepoch', 'localtime') >= datetime('now', '-60 Second') AND scan_id = " + str(self.scanID) + ";")
+        cursor.execute("SELECT mac,bssid,last_seen from clients WHERE scan_id = " + str(self.scanID) + ";")
 
         clientRows = cursor.fetchall()
 
