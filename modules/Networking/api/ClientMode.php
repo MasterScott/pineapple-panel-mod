@@ -64,7 +64,7 @@ class ClientMode
 
     public function connectToAP($uciID, $ap, $key, $radioID)
     {
-        exec('[ ! -z "$(wifi detect)" ] && wifi detect > /etc/config/wireless');
+        exec('[ ! -z "$(wifi config)" ] && wifi config > /etc/config/wireless');
 
         $security = $ap->security;
         switch ($security) {

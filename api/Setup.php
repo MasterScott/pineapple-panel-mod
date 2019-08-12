@@ -97,7 +97,7 @@ class Setup extends APIModule
         $openSSID = substr(escapeshellarg($openSSID), 0, 32);
         $managementPass = escapeshellarg($managementPass);
 
-        exec('/sbin/wifi detect > /etc/config/wireless');
+        exec('/sbin/wifi config > /etc/config/wireless');
         exec("uci set wireless.@wifi-iface[1].ssid={$managementSSID}");
         exec("uci set wireless.@wifi-iface[1].key={$managementPass}");
         exec("uci set wireless.@wifi-iface[1].hidden={$hideManagementAP}");
@@ -107,6 +107,7 @@ class Setup extends APIModule
         exec("uci set wireless.radio0.country={$countryCode}");
         exec("uci set wireless.radio1.country={$countryCode}");
         exec('uci commit wireless');
+
         return true;
     }
 
@@ -182,6 +183,7 @@ class Setup extends APIModule
     public function performSetup()
     {
         if (!$this->checkButtonStatus()) {
+            $this->error = "Not verified.";
             return false;
         }
 

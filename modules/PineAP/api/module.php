@@ -52,6 +52,10 @@ class PineAP extends SystemModule
                 $this->setPoolLocation();
                 break;
 
+            case 'clearSessionCounter':
+                $this->clearSessionCounter();
+                break;
+
             case 'setPineAPSettings':
                 $this->setPineAPSettings();
                 break;
@@ -233,6 +237,11 @@ class PineAP extends SystemModule
 
     private function loadProbes()
     {
+        if (!\helper\checkRunningFull("/usr/sbin/pineapd")) {
+            $this->response = array('success' => false, 'reason' => "not running");
+            return;
+        }
+
         $mac = strtolower($this->request->mac);
         $probesArray = array();
 
@@ -287,7 +296,7 @@ class PineAP extends SystemModule
 
     private function checkPineAP()
     {
-        if (!$this->checkRunning('/usr/sbin/pineapd')) {
+        if (!$this->checkRunningFull('/usr/sbin/pineapd')) {
             $this->response = array('error' => 'Please start PineAP', 'success' => false);
             return false;
         }
@@ -409,6 +418,18 @@ class PineAP extends SystemModule
         $dbLocation = dirname($this->request->location . '/fake_file');
         $this->uciSet("pineap.@config[0].ssid_db_path", $dbLocation . '/pineapple.db');
         $this->response = array('success' => true);
+    }
+
+    private function clearSessionCounter()
+    {
+        $ret = 0;
+        $output = array();
+        exec('/usr/sbin/resetssids', $output, $ret);
+        if ($ret !== 0) {
+            $this->error = "Could not clear SSID session counter.";
+        } else {
+            $this->response = array('success' => true);
+        }
     }
 
     private function getPineAPSettings()
@@ -825,7 +846,7 @@ class PineAP extends SystemModule
             $this->error = 'Invalid hex';
             return;
         }
-        if (!$this->checkRunning('/usr/sbin/pineapd')) {
+        if (!$this->checkRunningFull('/usr/sbin/pineapd')) {
             $this->error = 'Please start PineAP';
             return;
         }

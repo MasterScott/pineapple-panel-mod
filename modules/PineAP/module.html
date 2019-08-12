@@ -136,6 +136,7 @@
                         <ul class="dropdown-menu" aria-labelledby="poolDropdown">
                             <li ng-click="downloadPool()"><a>Download SSID Pool</a></li>
                             <li ng-click="clearPool()"><a>Clear SSID Pool</a></li>
+                            <li ng-click="clearSessionCounter()"><a>Clear Session Counter</a></li>
                         </ul>
                     </span>
                 </h3>
@@ -162,6 +163,7 @@
                 </div>
                 <br/>
                 <p class="alert well-sm alert-success" ng-show="clearedSSIDPool">SSID pool cleared successfully</p>
+                <p class="alert well-sm alert-success" ng-show="clearedSessionCounter">SSID collection counter cleared successfully</p>
                 <p class="alert well-sm alert-success" ng-show="addedSSID">SSID added successfully</p>
                 <p class="alert well-sm alert-success" ng-show="removedSSID">SSID removed successfully</p>
                 <p class="alert well-sm alert-success" ng-show="updatedPoolLocation">Pool location updated
