@@ -157,8 +157,16 @@
                         action: 'loadProbes',
                         mac: $scope.content
                     }, function(response) {
-                        $scope.probes = response.probes;
-                        $scope.probeError = $scope.probes === "";
+                        if (response.success) {
+                            $scope.probes = response.probes;
+                            if ($scope.probes.length === 0) {
+                                $scope.probeError = "There are no logged probes for this MAC Address.";
+                            }
+                        } else {
+                            if (response.reason === "not running") {
+                                $scope.probeError = "PineAP must be enabled to load probes.";
+                            }
+                        }
                     });
                 };
                 $scope.addProbes = function(){
@@ -210,7 +218,10 @@
                     request.onsuccess = function() {
                         var db = request.result;
                         var prefix = $scope.content.substring(0,8).replace(/:/g,'');
-                        var transaction = db.transaction("oui");
+                        var transaction = db.transaction(["oui"], 'readwrite');
+                        transaction.onerror = function() {
+                            $scope.oui = "Error retrieving OUI. Please clear your browsers cache."
+                        };
                         var objectStore = transaction.objectStore("oui");
                         var lookupReq = objectStore.get(prefix);
                         lookupReq.onerror = function() {

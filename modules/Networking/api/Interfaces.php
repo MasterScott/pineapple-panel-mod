@@ -70,7 +70,7 @@ class Interfaces
 
     public function resetWirelessConfig()
     {
-        execBackground("wifi detect > /etc/config/wireless && wifi");
+        execBackground("wifi config > /etc/config/wireless && wifi");
         return array("success" => true);
     }
 

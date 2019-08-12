@@ -106,7 +106,7 @@ class Configuration extends SystemModule
     private function changeTimeZone()
     {
         $timeZone = $this->request->timeZone;
-        file_put_contents($timeZone, '/etc/TZ');
+        file_put_contents('/etc/TZ', $timeZone);
         $this->uciSet('system.@system[0].timezone', $timeZone);
         $this->response = array("success" => true);
     }

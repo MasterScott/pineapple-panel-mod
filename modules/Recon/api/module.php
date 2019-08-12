@@ -108,7 +108,7 @@ class Recon extends SystemModule
 
     private function startPineAPDaemon()
     {
-        if(!$this->checkRunning("/usr/sbin/pineapd")) {
+        if(!$this->checkRunningFull("/usr/sbin/pineapd")) {
             exec("/etc/init.d/pineapd start");
         }
         $this->response = array("success" => true);
@@ -116,7 +116,7 @@ class Recon extends SystemModule
 
     private function checkPineAPDaemon()
     {
-        if($this->checkRunning("/usr/sbin/pineapd")) {
+        if($this->checkRunningFull("/usr/sbin/pineapd")) {
            return true;
         } else {
             return false;

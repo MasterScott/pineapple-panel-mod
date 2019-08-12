@@ -25,15 +25,50 @@ class PineAPHelper
         return false;
     }
 
+    public function setSetting($settingKey, $settingVal)
+    {
+        $configFile = file_get_contents("/tmp/pineap.conf");
+        $configFileOut = "";
+
+        $configFile = explode("\n", $configFile);
+        foreach($configFile as $row => $data) {
+            $entry = str_replace(" ", "", $data);
+            $entry = explode("=", $entry);
+
+            if ($entry[0] == $settingKey) {
+                $entry[1] = $settingVal;
+            }
+
+            if ($entry[0] != "" && $entry[1] != "") {
+                $configFileOut .= $entry[0] . " = " . $entry[1] . "\n";
+            }
+        }
+
+        file_put_contents("/tmp/pineap.conf", "");
+        file_put_contents("/tmp/pineap.conf", $configFileOut);
+
+        return true;
+    }
+
     public function enableAssociations()
     {
-        exec("pineap /tmp/pineap.conf karma on");
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            exec("pineap /tmp/pineap.conf karma on");
+        } else {
+            $this->setSetting("karma", "on");
+        }
+
         return true;
     }
 
     public function disableAssociations()
     {
-        exec("pineap /tmp/pineap.conf karma off");
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            exec("pineap /tmp/pineap.conf karma off");
+        } else {
+            $this->setSetting("karma", "off");
+        }
+
         return true;
     }
 
@@ -51,73 +86,120 @@ class PineAPHelper
 
     public function enableLogging()
     {
-        exec("pineap /tmp/pineap.conf logging on");
+        if (\helper\checkRunning('/usr/sbin/pineapd')) {
+            exec("pineap /tmp/pineap.conf logging on");
+        } else {
+            $this->setSetting("logging", "on");
+        }
+
         return true;
     }
 
     public function disableLogging()
     {
-        exec("pineap /tmp/pineap.conf logging off");
+        $this->setSetting("logging", "off");
+        if (\helper\checkRunning('/usr/sbin/pineapd')) {
+            exec("pineap /tmp/pineap.conf logging off");
+        }
         return true;
     }
 
     public function enableBeaconer()
     {
-        exec('pineap /tmp/pineap.conf broadcast_pool on');
+        $this->setSetting("broadcast_ssid_pool", "on");
+        if (\helper\checkRunning('/usr/sbin/pineapd')) {
+            exec('pineap /tmp/pineap.conf broadcast_pool on');
+        }
         return true;
     }
 
     public function disableBeaconer()
     {
-        exec('pineap /tmp/pineap.conf broadcast_pool off');
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            exec('pineap /tmp/pineap.conf broadcast_pool off');
+        } else {
+            $this->setSetting("broadcast_ssid_pool", "off");
+        }
         return true;
     }
 
     public function enableResponder()
     {
-        exec('pineap /tmp/pineap.conf beacon_responses on');
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            exec('pineap /tmp/pineap.conf beacon_responses on');
+        } else {
+            $this->setSetting("beacon_responses", "on");
+        }
         return true;
     }
 
     public function disableResponder()
     {
-        exec('pineap /tmp/pineap.conf beacon_responses off');
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            exec('pineap /tmp/pineap.conf beacon_responses off');
+        } else {
+            $this->setSetting("beacon_responses", "off");
+        }
         return true;
     }
 
     public function enableHarvester()
     {
-        exec('pineap /tmp/pineap.conf capture_ssids on');
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            exec('pineap /tmp/pineap.conf capture_ssids on');
+        } else {
+            $this->setSetting("capture_ssids", "on");
+        }
         return true;
     }
 
     public function disableHarvester()
     {
-        exec('pineap /tmp/pineap.conf capture_ssids off');
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            exec('pineap /tmp/pineap.conf capture_ssids off');
+        } else {
+            $this->setSetting("capture_ssids", "off");
+        }
         return true;
     }
 
     public function enableConnectNotifications()
     {
-        exec('pineap /tmp/pineap.conf connect_notifications on');
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            exec('pineap /tmp/pineap.conf connect_notifications on');
+        } else {
+            $this->setSetting("connect_notifications", "on");
+        }
         return true;
     }
 
     public function disableConnectNotifications()
     {
-        exec('pineap /tmp/pineap.conf connect_notifications off');
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            exec('pineap /tmp/pineap.conf connect_notifications off');
+        } else {
+            $this->setSetting("connect_notifications", "off");
+        }
         return true;
     }
 
     public function enableDisconnectNotifications()
     {
-        exec('pineap /tmp/pineap.conf disconnect_notifications on');
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            exec('pineap /tmp/pineap.conf disconnect_notifications on');
+        } else {
+            $this->setSetting("disconnect_notifications", "on");
+        }
         return true;
     }
 
     public function disableDisconnectNotifications()
     {
-        exec('pineap /tmp/pineap.conf disconnect_notifications off');
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            exec('pineap /tmp/pineap.conf disconnect_notifications off');
+        } else {
+            $this->setSetting("disconnect_notifications", "off");
+        }
         return true;
     }
 
@@ -133,29 +215,48 @@ class PineAPHelper
 
     public function setBeaconInterval($interval)
     {
-        $interval = escapeshellarg($interval);
-        exec("pineap /tmp/pineap.conf beacon_interval {$interval}");
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            $interval = escapeshellarg($interval);
+            exec("pineap /tmp/pineap.conf beacon_interval {$interval}");
+        } else {
+            $this->setSetting("beacon_interval", "{$interval}");
+        }
+
         return;
     }
 
     public function setResponseInterval($interval)
     {
-        $interval = escapeshellarg($interval);
-        exec("pineap /tmp/pineap.conf beacon_response_interval {$interval}");
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            $interval = escapeshellarg($interval);
+            exec("pineap /tmp/pineap.conf beacon_response_interval {$interval}");
+        } else {
+            $this->setSetting("beacon_response_interval", "{$interval}");
+        }
+
         return;
     }
 
     public function setSource($mac)
     {
-        $mac = escapeshellarg($mac);
-        exec("pineap /tmp/pineap.conf set_source {$mac}");
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            $mac = escapeshellarg($mac);
+            exec("pineap /tmp/pineap.conf set_source {$mac}");
+        } else {
+            $this->setSetting("pineap_mac", "{$mac}");
+        }
+
         return;
     }
 
     public function setTarget($mac)
     {
-        $mac = escapeshellarg($mac);
-        exec("pineap /tmp/pineap.conf set_target {$mac}");
+        if (\helper\checkRunning("/usr/sbin/pineapd")) {
+            $mac = escapeshellarg($mac);
+            exec("pineap /tmp/pineap.conf set_target {$mac}");
+        } else {
+            $this->setSetting("target_mac", "{$mac}");
+        }
         return;
     }
 

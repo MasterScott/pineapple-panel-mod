@@ -259,12 +259,12 @@ registerController('ReconController', ['$api', '$scope', '$rootScope', '$interva
         ts += 'Z';
 
         var d = new Date(ts);
-        var day = d.getDate();
+        var day = `${d.getDate()}`.padStart(2, '0');
         var year = d.getFullYear();
         var month = d.getMonth();
-        var hour = d.getHours();
-        var mins = d.getMinutes();
-        var secs = d.getSeconds();
+        var hour = `${d.getHours()}`.padStart(2, '0');
+        var mins = `${d.getMinutes()}`.padStart(2, '0');
+        var secs = `${d.getSeconds()}`.padStart(2, '0');
 
         return year + '-' + m[month] + '-' + day + ' ' + hour + ':' + mins + ':' + secs;
     };

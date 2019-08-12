@@ -42,9 +42,14 @@ class Dashboard extends SystemModule
 
     private function getCpu()
     {
-        $cpu = exec("top -bn1 | grep CPU -m1 | awk '{print $8}'");
-        $cpu = rtrim($cpu, "%");
-        return 100 - $cpu;
+        $loads = sys_getloadavg();
+        $load = round($loads[0]/2*100, 1);
+
+        if ($load > 100) {
+            return '100';
+        }
+
+        return $load;
     }
 
     private function getUptime()

@@ -4,6 +4,7 @@ registerController('PineAPPoolController', ['$api', '$scope', '$timeout', functi
     $scope.addedSSID = "";
     $scope.removedSSID = "";
     $scope.clearedSSIDPool = "";
+    $scope.clearedSessionCounter = false;
     $scope.lengthError = "";
     $scope.poolLocation = "";
 
@@ -109,6 +110,20 @@ registerController('PineAPPoolController', ['$api', '$scope', '$timeout', functi
             }
         });
         $scope.getPool();
+    });
+
+    $scope.clearSessionCounter = (function() {
+        $api.request({
+            module: 'PineAP',
+            action: 'clearSessionCounter'
+        }, function(response) {
+            if (response.success === true) {
+                $scope.clearedSessionCounter = true;
+                $timeout(function() {
+                    $scope.clearedSessionCounter = false;
+                }, 2000);
+            }
+        })
     });
 
     $scope.getSSIDLineNumber = function() {
