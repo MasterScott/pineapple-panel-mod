@@ -2,12 +2,28 @@
 
 function execBackground($command)
 {
-	return exec("echo \"{$command}\" | at now");
+	exec("echo \"{$command}\" | /usr/bin/at now", $var);
+	return $var;
+}
+
+function checkDependency($dependencyName)
+{
+    exec("/usr/bin/which $dependencyName", $output);
+    if (trim($output[0]) == "") {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 function isSDAvailable()
 {
-	return (exec('mount | grep "on /sd" -c') >= 1) ? true : false;
+    $output = exec('/bin/mount | /bin/grep "on /sd" -c');
+    if ($output >= 1) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function sdReaderPresent() {
@@ -21,13 +37,13 @@ function sdCardPresent() {
 function checkRunning($processName)
 {
 	$processName = escapeshellarg($processName);
-	exec("pgrep {$processName}", $output);
+	exec("/usr/bin/pgrep {$processName}", $output);
 	return count($output) > 0;
 }
 
 function checkRunningFull($processString) {
 	$processString = escapeshellarg($processString);
-	exec("pgrep -f {$processString}", $output);
+	exec("/usr/bin/pgrep -f {$processString}", $output);
 	return count($output) > 0;
 }
 
