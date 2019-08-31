@@ -127,6 +127,6 @@ abstract class Module
 
     protected function checkDependency($dependencyName)
     {
-        return (trim(exec("which {$dependencyName}")) == '' ? false : true);
+        return \helper\checkDependency($dependencyName);
     }
 }

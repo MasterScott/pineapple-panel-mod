@@ -1,6 +1,6 @@
-registerController("ModuleManagerController", ['$api', '$scope', '$timeout', '$interval', '$templateCache', function($api, $scope, $timeout, $interval, $templateCache){
-    $scope.availableModules = [];
-    $scope.installedModules = [];
+registerController("ModuleManagerController", ['$api', '$scope', '$timeout', '$interval', '$templateCache', '$rootScope', function($api, $scope, $timeout, $interval, $templateCache, $rootScope){
+    $rootScope.availableModules = [];
+    $rootScope.installedModules = [];
     $scope.installedModule = "";
     $scope.removedModule = "";
     $scope.gotAvailableModules = false;
@@ -29,7 +29,7 @@ registerController("ModuleManagerController", ['$api', '$scope', '$timeout', '$i
         }, function(response) {
             $scope.loading = false;
             if (response.error === undefined) {
-                $scope.availableModules = response.availableModules;
+                $rootScope.availableModules = response.availableModules;
                 $scope.compareModuleLists();
                 $scope.gotAvailableModules = true;
                 $scope.connectionError = false;
@@ -44,7 +44,7 @@ registerController("ModuleManagerController", ['$api', '$scope', '$timeout', '$i
             module: "ModuleManager",
             action: "getInstalledModules"
         }, function(response) {
-            $scope.installedModules = response.installedModules;
+            $rootScope.installedModules = response.installedModules;
             if ($scope.gotAvailableModules) {
                 $scope.compareModuleLists();
             }
@@ -52,86 +52,19 @@ registerController("ModuleManagerController", ['$api', '$scope', '$timeout', '$i
     });
 
     $scope.compareModuleLists = (function() {
-        angular.forEach($scope.availableModules, function(module, moduleName){
-            if ($scope.installedModules[moduleName] === undefined){
+        angular.forEach($rootScope.availableModules, function(module, moduleName){
+            if ($rootScope.installedModules[moduleName] === undefined){
                 module['installable'] = true;
-            } else if ($scope.availableModules[moduleName].version <= $scope.installedModules[moduleName].version) {
+            } else if ($rootScope.availableModules[moduleName].version <= $rootScope.installedModules[moduleName].version) {
                 module['installed'] = true;
             }
-        });
-    });
-
-    $scope.downloadModule = (function(dest) {
-        $api.request({
-            module: 'ModuleManager',
-            action: 'downloadModule',
-            moduleName: $scope.selectedModule.module,
-            destination: dest
-        }, function(response) {
-            if (response.error === undefined) {
-                $scope.downloading = true;
-                var ival = $interval(function() {
-                    $api.request({
-                        module: 'ModuleManager',
-                        action: 'downloadStatus',
-                        moduleName: $scope.selectedModule.module,
-                        destination: dest,
-                        checksum: $scope.availableModules[$scope.selectedModule.module]['checksum']
-                    }, function(response) {
-                        if (response.success === true) {
-                            $interval.cancel(ival);
-                            $scope.installModule(dest);
-                        }
-                    });
-                }, 2000);
-            }
-        });
-    });
-
-    $scope.installModule = (function(dest) {
-        if ($scope.installing) {
-            return;
-        }
-        $scope.downloading = false;
-        $scope.installing = true;
-
-
-        $api.request({
-            module: 'ModuleManager',
-            action: 'installModule',
-            moduleName: $scope.selectedModule.module,
-            destination: dest
-        }, function() {
-            var ival = $interval(function() {
-                $api.request({
-                    module: 'ModuleManager',
-                    action: 'installStatus'
-                }, function(response) {
-                    if (response.success === true) {
-                        $interval.cancel(ival);
-                        $templateCache.removeAll();
-                        $scope.installedModule = true;
-                        $scope.installing = false;
-                        $scope.getInstalledModules();
-                        $api.reloadNavbar();
-                        if ($scope.selectedModule.module === 'ModuleManager') {
-                            window.location.reload();
-                        } else {
-                            $scope.selectedModule = false;
-                        }
-                        $timeout(function(){
-                            $scope.installedModule = false;
-                        }, 2000);
-                    }
-                });
-            }, 500);
         });
     });
 
     $scope.checkDestination = (function(moduleName, moduleSize) {
         $(window).scrollTop(0);
 
-        if ($scope.installedModules[moduleName] !== undefined && $scope.installedModules[moduleName]['type'] === 'System') {
+        if ($rootScope.installedModules[moduleName] !== undefined && $rootScope.installedModules[moduleName]['type'] === 'System') {
             $scope.selectedModule = {module: moduleName, internal: true, sd: false};
             return;
         }
