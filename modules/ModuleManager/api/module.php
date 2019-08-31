@@ -158,7 +158,7 @@ class ModuleManager extends SystemModule
     {
         $responseArray = array('module' => $this->request->name, 'internal' => false, 'sd' => false);
 
-        if (disk_free_space('/') > ($this->request->size + 350000)) {
+        if (disk_free_space('/') > ($this->request->size + 150000)) {
             $responseArray['internal'] = true;
         }
 

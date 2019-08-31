@@ -720,4 +720,208 @@
                 }]
             };
         })
+        .directive('installModal', function(){
+            return {
+                restrict: 'E',
+                templateUrl: '/html/install-modal.html',
+                scope: {
+                    hook: '@hook',
+                    content: '=content'
+                },
+                controller: ['$scope', '$api', '$timeout', '$http', '$interval', '$templateCache', '$rootScope', function($scope, $api, $timeout, $http, $interval, $templateCache, $rootScope){
+                    $scope.device = '';
+                    $rootScope.installedModules = [];
+                    $scope.selectedModule = null;
+
+                    $scope.destroyModal = function(){
+                        $('#install-hook').modal('hide');
+                    };
+
+                    $scope.getDevice = (function() {
+                        $api.request({
+                            module: "Configuration",
+                            action: "getDevice"
+                        }, function(response) {
+                            $scope.device = response.device;
+                        });
+                    });
+                    $scope.getDevice();
+
+                    $scope.getInstalledModules = (function() {
+                        $api.request({
+                            module: "ModuleManager",
+                            action: "getInstalledModules"
+                        }, function(response) {
+                            $rootScope.installedModules = response.installedModules;
+                            $scope.compareModuleLists();
+                        });
+                    });
+
+                    $scope.compareModuleLists = (function() {
+                        angular.forEach($rootScope.availableModules, function(module, moduleName){
+                            if ($rootScope.installedModules[moduleName] === undefined){
+                                module['installable'] = true;
+                            } else if ($rootScope.availableModules[moduleName].version <= $rootScope.installedModules[moduleName].version) {
+                                module['installed'] = true;
+                            }
+                        });
+                    });
+
+                    $scope.checkDestination = (function(moduleName, moduleSize, moduleType) {
+                        $(window).scrollTop(0);
+
+                        if (moduleType === 'Sys') {
+                            $scope.selectedModule = {module: moduleName, internal: true, sd: false};
+                            return;
+                        }
+
+                        if ($scope.device === 'tetra') {
+                            $scope.selectedModule = {module: moduleName, internal: true, sd: false};
+                            return;
+                        }
+
+                        $api.request({
+                            module: 'ModuleManager',
+                            action: 'checkDestination',
+                            name: moduleName,
+                            size: moduleSize
+                        }, function(response) {
+                            if (response.error === undefined) {
+                                $scope.selectedModule = response;
+                            }
+                        });
+                    });
+                    $scope.checkDestination($scope.content.name, $scope.content.module['size'], $scope.content.module['type']);
+
+                    $scope.downloadModule = (function(dest) {
+                        $api.request({
+                            module: 'ModuleManager',
+                            action: 'downloadModule',
+                            moduleName: $scope.selectedModule.module,
+                            destination: dest
+                        }, function(response) {
+                            if (response.error === undefined) {
+                                $scope.downloading = true;
+                                var ival = $interval(function() {
+                                    $api.request({
+                                        module: 'ModuleManager',
+                                        action: 'downloadStatus',
+                                        moduleName: $scope.selectedModule.module,
+                                        destination: dest,
+                                        checksum: $rootScope.availableModules[$scope.selectedModule.module]['checksum']
+                                    }, function(response) {
+                                        if (response.success === true) {
+                                            $interval.cancel(ival);
+                                            $scope.installModule(dest);
+                                        }
+                                    });
+                                }, 2000);
+                            }
+                        });
+                    });
+
+                    $scope.installModule = (function(dest) {
+                        if ($scope.installing) {
+                            return;
+                        }
+                        $scope.downloading = false;
+                        $scope.installing = true;
+
+                        $api.request({
+                            module: 'ModuleManager',
+                            action: 'installModule',
+                            moduleName: $scope.selectedModule.module,
+                            destination: dest
+                        }, function() {
+                            var ival = $interval(function() {
+                                $api.request({
+                                    module: 'ModuleManager',
+                                    action: 'installStatus'
+                                }, function(response) {
+                                    if (response.success === true) {
+                                        $interval.cancel(ival);
+                                        $templateCache.removeAll();
+                                        $scope.installedModule = true;
+                                        $scope.installing = false;
+                                        $scope.getInstalledModules();
+                                        $api.reloadNavbar();
+                                        if ($scope.selectedModule.module === 'ModuleManager') {
+                                            window.location.reload();
+                                        } else {
+                                            $scope.selectedModule = null;
+                                            $scope.destroyModal();
+                                        }
+                                        $timeout(function(){
+                                            $scope.installedModule = false;
+                                        }, 2000);
+                                    }
+                                });
+                            }, 500);
+                        });
+                    });
+                }]
+            };
+        })
+        .directive('installButton', function(){
+            return {
+                restrict: 'E',
+                template: '<button ng-disabled="disable" ng-click="showModal($event)" class="btn btn-default btn-xs btn-fixed-length" type="button">Install</button>',
+                scope: {
+                    hook: '@hook',
+                    content: '=content'
+                },
+                controller: ['$scope', '$compile', function($scope, $compile){
+                    $scope.makeModalWithContent = function(){
+                        var html = '<install-modal hook="hook" content="content"></install-modal>';
+                        var el = $compile(html)($scope);
+                        $('body').append(el);
+                        $('#install-hook').modal({
+                            show: true,
+                            keyboard: false,
+                            backdrop: 'static'
+                        });
+                    };
+
+                    $scope.showModal = function(){
+                        $('#install-hook').remove();
+                        $scope.makeModalWithContent();
+                    };
+
+                    $scope.destroyModal = function(){
+                        $('#install-hook').modal('hide');
+                    };
+                }]
+            };
+        })
+        .directive('updateButton', function(){
+            return {
+                restrict: 'E',
+                template: '<button ng-disabled="disable" ng-click="showModal($event)" class="btn btn-primary btn-xs btn-fixed-length" type="button">Update</button>',
+                scope: {
+                    hook: '@hook',
+                    content: '=content'
+                },
+                controller: ['$scope', '$compile', function($scope, $compile){
+                    $scope.makeModalWithContent = function(){
+                        var html = '<install-modal hook="hook" content="content"></install-modal>';
+                        var el = $compile(html)($scope);
+                        $('body').append(el);
+                        $('#install-hook').modal({
+                            show: true,
+                            keyboard: false,
+                            backdrop: 'static'
+                        });
+                    };
+
+                    $scope.showModal = function(){
+                        $('#install-hook').remove();
+                        $scope.makeModalWithContent();
+                    };
+
+                    $scope.destroyModal = function(){
+                        $('#install-hook').modal('hide');
+                    };
+                }]
+            };
+        })
 })();

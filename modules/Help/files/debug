@@ -5,30 +5,30 @@ LOG=/tmp/debug.log.tmp
 touch $LOG
 echo "Retrieving /proc/cpuinfo"
 echo "============CPUINFO========" > $LOG
-cat /proc/cpuinfo &>> $LOG
+cat /proc/cpuinfo >> $LOG
 echo "Retrieving firmware version"
-echo -n "Firmware Version: " &>> $LOG && cat /etc/pineapple/pineapple_version &>> $LOG
+echo -n "Firmware Version: " >> $LOG && cat /etc/pineapple/pineapple_version >> $LOG
 echo "Retrieving lsusb output"
 echo "=============LSUSB=========" >> $LOG
-lsusb &>> $LOG
+lsusb >> $LOG
 echo "Retrieving disk usage information"
 echo "==============DF===========" >> $LOG
-df -h &>> $LOG
+df -h >> $LOG
 echo "Retrieving iw device list"
 echo "==============IW===========" >> $LOG
-iw dev &>> $LOG
+iw dev >> $LOG
 echo "Retrieving ifconfig interface list"
 echo "===========IFCONFIG========" >> $LOG
-ifconfig -a &>> $LOG
+ifconfig -a >> $LOG
 echo "Retrieving iwconfig device list"
 echo "===========IWCONFIG========" >> $LOG
 (iwconfig 2>&1) >> $LOG
 echo "Retrieving dmesg log"
 echo "============DMESG==========" >> $LOG
-dmesg &>> $LOG
+dmesg >> $LOG
 echo "Retrieving syslog"
 echo "============LOGREAD========" >> $LOG
-logread &>> $LOG
+logread >> $LOG
 echo "Retrieving /etc/config/wireless"
 echo "===== WIRELESS CONFIG======" >> $LOG
 cat /etc/config/wireless >> $LOG
